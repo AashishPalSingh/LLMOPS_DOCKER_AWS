@@ -1,0 +1,78 @@
+name:workflow
+
+on:
+  push:
+    branches: [main]
+    - paths-ignore:
+        - "Readme.md"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  integration:
+    name: Continous Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Lint code
+        uses: github/super-linter@v5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          run_linter: true
+          run_tests: false
+          run_prettier: false
+          run_markdownlint: false
+          run_actionslint: false
+
+      - name: Run unit tests
+        run: |
+          echo "Running unit tests..."
+
+  build-and-push-ecr-image:
+    name: Build and Push ECR Image
+    runs-on: ubuntu-latest
+    needs: integration
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Utility Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq unzip
+
+      - name: Build, tag , and push image to amazon ecr
+        id: build-image
+        env:
+          IMAGE_TAG: latest
+        run: |
+          echo "Building and pushing Docker image to Amazon ECR..."
+          docker build -t ${{ secrets.AWS_ECR_REPO_URI }}:$IMAGE_TAG .
+          docker push ${{ secrets.AWS_ECR_REPO_URI }}:$IMAGE_TAG
+        
+  # continous-deployment:
+  #   name: Continous Deployment  
+  #   needs: build-and-push-ecr-image
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+  #     - name: Log in to Amazon ECR
+  #       id: ecr-login
+  #       uses: aws-actions/amazon-ecr-login@v1
+
+  #     - name: Pull latest images
+  #       run: |
+  #         docker pull ${{ secrets.AWS_ECR_REPO_URI }}:latest || true
