@@ -1,17 +1,11 @@
-import json
 from dotenv import load_dotenv
 import os
-import sys
 import boto3
 import streamlit as st
 
 
 from langchain_community.vectorstores import FAISS
-from langchain_community.llms.bedrock import Bedrock
 from langchain_aws import BedrockEmbeddings
-
-from langchain.prompts import PromptTemplate
-from langchain.chains import RetrievalQA
 
 from QASystem.ingestion import data_ingestion, get_vector_store
 

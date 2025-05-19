@@ -6,7 +6,7 @@ from langchain_aws import BedrockEmbeddings
 import os
 from dotenv import load_dotenv
 
-import boto3  ## bedrock client
+import boto3
 
 load_dotenv(".env")
 print(" Embedding model id: ", os.getenv("EMBEDDING_MODEL_ID"))
