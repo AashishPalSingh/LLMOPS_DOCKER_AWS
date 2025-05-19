@@ -1,7 +1,7 @@
 name: workflow
 on:
   workflow_run:
-    workflows: ["preBuild"]
+    workflows: [ "preBuild" ]
     types:
       - completed
 
