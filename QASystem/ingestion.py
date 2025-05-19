@@ -1,14 +1,11 @@
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.llms.bedrock import Bedrock
 from langchain_aws import BedrockEmbeddings
 
-import json
 import os
 from dotenv import load_dotenv
 
-import sys
 import boto3  ## bedrock client
 
 load_dotenv(".env")

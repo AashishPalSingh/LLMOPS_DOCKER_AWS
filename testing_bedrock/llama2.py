@@ -1,14 +1,10 @@
 import os
 import json
-import sys
 import boto3
 
 print("impotred successfully...")
 
-prompt = """
-
-        you are a cricket expert now just tell me when RCB will win the IPL?
-"""
+prompt = """you are a cricket expert now just tell me when RCB will win the IPL?"""
 
 bedrock = boto3.client(service_name="bedrock-runtime")
 

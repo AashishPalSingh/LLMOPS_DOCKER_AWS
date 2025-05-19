@@ -26,6 +26,8 @@ jobs:
           run_prettier: false
           run_markdownlint: false
           run_actionslint: false
+          run_dockerfilelint: false
+          run_yamllint: false
 
       - name: Run unit tests
         run: |

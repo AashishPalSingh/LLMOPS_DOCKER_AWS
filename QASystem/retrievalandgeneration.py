@@ -3,8 +3,6 @@ from langchain_community.vectorstores import FAISS
 from langchain_community.llms.bedrock import Bedrock
 import boto3
 from langchain.prompts import PromptTemplate
-from QASystem.ingestion import get_vector_store
-from QASystem.ingestion import data_ingestion
 from langchain_aws import BedrockEmbeddings
 import os
 from dotenv import load_dotenv
@@ -17,9 +15,7 @@ bedrock_embeddings = BedrockEmbeddings(
 )
 
 
-prompt_template = """
-
-Human: Use the following pieces of context to provide a 
+prompt_template = """Human: Use the following pieces of context to provide a 
 concise answer to the question at the end but usse atleast summarize with 
 250 words with detailed explaantions. If you don't know the answer, 
 just say that you don't know, don't try to make up an answer.
