@@ -2,9 +2,9 @@ name:workflow
 
 on:
   push:
-    branches: [main]
-    - paths-ignore:
-        - "Readme.md"
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
