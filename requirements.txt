@@ -12,3 +12,7 @@ pypdf
 faiss-cpu
 langchain-aws
 dotenv
+strictyaml
+black
+pylint
+
