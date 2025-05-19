@@ -2,3 +2,4 @@
 
 ## aws configure
 
+## python setup.py install
