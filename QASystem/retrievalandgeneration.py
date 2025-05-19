@@ -1,14 +1,20 @@
 from langchain.chains import RetrievalQA
-from langchain.vectorstores import FAISS
-from langchain.llms.bedrock import Bedrock
+from langchain_community.vectorstores import FAISS
+from langchain_community.llms.bedrock import Bedrock
 import boto3
 from langchain.prompts import PromptTemplate
 from QASystem.ingestion import get_vector_store
 from QASystem.ingestion import data_ingestion
-from langchain_community.embeddings import BedrockEmbeddings
+from langchain_aws import BedrockEmbeddings
+import os
+from dotenv import load_dotenv
 
-bedrock=boto3.client(service_name="bedrock-runtime")
-bedrock_embeddings=BedrockEmbeddings(model_id="amazon.titan-embed-text-v1",client=bedrock)
+load_dotenv(".env")
+
+bedrock = boto3.client(service_name="bedrock-runtime")
+bedrock_embeddings = BedrockEmbeddings(
+    model_id=os.getenv("EMBEDDING_MODEL_ID"), client=bedrock
+)
 
 
 prompt_template = """
@@ -25,37 +31,37 @@ Question: {question}
 
 Assistant:"""
 
-PROMPT=PromptTemplate(
-    template=prompt_template,input_variables=["context","question"]
+PROMPT = PromptTemplate(
+    template=prompt_template, input_variables=["context", "question"]
 )
 
 
 def get_llama2_llm():
-    llm=Bedrock(model_id="meta.llama2-13b-chat-v1",client=bedrock)
-    
+    llm = Bedrock(model_id=os.getenv("MODEL_ID"), client=bedrock)
+
     return llm
 
-def get_response_llm(llm,vectorstore_faiss,query):
-    qa=RetrievalQA.from_chain_type(
+
+def get_response_llm(llm, vectorstore_faiss, query):
+    qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
         retriever=vectorstore_faiss.as_retriever(
-            search_type="similarity",
-            search_kwargs={"k":3}
+            search_type="similarity", search_kwargs={"k": 3}
         ),
         return_source_documents=True,
-        chain_type_kwargs={"prompt":PROMPT}
-        
-        
+        chain_type_kwargs={"prompt": PROMPT},
     )
-    answer=qa({"query":query})
+    answer = qa({"query": query})
     return answer["result"]
-    
-if __name__=='__main__':
-    #docs=data_ingestion()
-    #vectorstore_faiss=get_vector_store(docs)
-    faiss_index=FAISS.load_local("faiss_index",bedrock_embeddings,allow_dangerous_deserialization=True)
-    query="What is RAG token?"
-    llm=get_llama2_llm()
-    print(get_response_llm(llm,faiss_index,query))
-    
+
+
+if __name__ == "__main__":
+    # docs=data_ingestion()
+    # vectorstore_faiss=get_vector_store(docs)
+    faiss_index = FAISS.load_local(
+        "faiss_index", bedrock_embeddings, allow_dangerous_deserialization=True
+    )
+    query = "What is RAG token?"
+    llm = get_llama2_llm()
+    print(get_response_llm(llm, faiss_index, query))

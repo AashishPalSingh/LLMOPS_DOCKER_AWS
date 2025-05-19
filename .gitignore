@@ -1,2 +1,17 @@
 venv
+__pycache__
+dist
+build
+*.egg-info
+*.egg
+*.whl
+*.log
+*.sqlite3
+*.db
+*.pyo
+*.pyd
+*.pyc
+*.pdb
+*.coverage
+*.cover
 .env
